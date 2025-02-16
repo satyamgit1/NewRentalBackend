@@ -7,11 +7,13 @@ import rentalRoutes from './routes/rentalRoutes.js';
 import exportRoutes from './routes/exportRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorHandler.js';
 import './utils/lowStockCheck.js';
+import serverless from 'serverless-http';
 
 dotenv.config();
 connectDB();
 
 const app = express();
+export const handler = serverless(app);
 
 app.use(cors());
 app.use(express.json());
@@ -27,7 +29,9 @@ app.use(errorHandler);
 
 // Serverless export
 export default app;
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => 
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => 
+      console.log(`Server running on port ${PORT}`));
+  }
+  
